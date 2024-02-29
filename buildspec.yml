@@ -1,0 +1,39 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12 
+
+    commands: 
+      - echo Entered the install phase...
+      - echo Installing cfn-lint
+      - pip3 install cfn-lint
+  
+  pre_build:
+    commands:
+      - echo Entered the pre_build phase...
+      - echo checking the version of python installed
+      - python3 --version
+      - echo checking the version of cfn-lint installed
+      - cfn-lint --version
+  
+  build:
+    commands:
+      - echo Entered the build phase...
+      - echo validating the cloudformation template
+      - cfn-lint Sample-EC2.yml
+      - echo building the cloudformation
+      - aws cloudformation package --template-file Sample-EC2.yml --s3-bucket myartifacts-bucket --output-template-file package-output-template.yml
+  
+  post_build:
+    commands:
+      - echo Entered the post_build phase...
+      - echo Build completed on 'date'
+
+artifacts:
+  files:
+    - package-output-template.yml
+    
+      
+
